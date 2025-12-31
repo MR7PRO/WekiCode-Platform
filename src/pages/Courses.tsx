@@ -56,6 +56,30 @@ interface Enrollment {
   completed_lessons: number[];
 }
 
+// --- Image helpers ---------------------------------------------------------
+// In production (Netlify/Docker nginx.conf) CSP allows only:
+//   img-src 'self' data: https: blob:
+// So any http:// image will be blocked. Also relative paths can break on routes
+// like /courses if the value doesn't start with '/'.
+const DEFAULT_COURSE_IMAGE = `${import.meta.env.BASE_URL || '/'}placeholder.svg`;
+
+const resolveCourseImage = (raw?: string | null) => {
+  if (!raw) return DEFAULT_COURSE_IMAGE;
+  const url = String(raw).trim();
+  if (!url) return DEFAULT_COURSE_IMAGE;
+
+  // Upgrade http -> https to satisfy CSP and avoid mixed content.
+  if (url.startsWith('http://')) return url.replace(/^http:\/\//, 'https://');
+
+  // Allow already-absolute URLs and data/blob.
+  if (url.startsWith('https://') || url.startsWith('data:') || url.startsWith('blob:')) return url;
+
+  // Treat everything else as a local/public asset path.
+  const base = import.meta.env.BASE_URL || '/';
+  const clean = url.replace(/^\/+/, '');
+  return `${base}${clean}`;
+};
+
 export default function Courses() {
   const { user, profile, refreshProfile } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState("الكل");
@@ -485,7 +509,7 @@ export default function Courses() {
             <>
               {/* Courses Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredCourses.map((course) => {
+                {filteredCourses.map((course, index) => {
                   const enrollment = getEnrollment(course.id);
                   const isEnrolled = !!enrollment;
                   const isFavorite = favoriteCourses.includes(course.id);
@@ -500,10 +524,17 @@ export default function Courses() {
                       {/* Thumbnail */}
                       <div className="relative h-40 overflow-hidden bg-gradient-to-br from-primary/20 to-accent/20">
                         <img
-                          src={course.image_url || "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=200&fit=crop"}
+                          src={resolveCourseImage(course.image_url)}
                           alt={course.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          loading="lazy"
+                          loading={index < 3 ? "eager" : "lazy"}
+                          decoding="async"
+                          onError={(e) => {
+                            const img = e.currentTarget;
+                            if (img.dataset.fallbackApplied) return;
+                            img.dataset.fallbackApplied = "1";
+                            img.src = DEFAULT_COURSE_IMAGE;
+                          }}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
                         
