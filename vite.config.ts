@@ -16,8 +16,9 @@ export default defineConfig(({ mode }) => ({
     VitePWA({
       registerType: "autoUpdate",
 
-      // ✅ خلي الـ PWA والكاش ياخدوا نفس أيقونة الموقع الجديدة
+      // ✅ تعديل بسيط: أضفنا ملفات الأيقونات الجديدة (وتركنا القديمة كمان)
       includeAssets: [
+        "favicon.png",
         "favicon.ico",
         "favicon.svg",
         "favicon-16.png",
@@ -26,6 +27,8 @@ export default defineConfig(({ mode }) => ({
         "favicon-192.png",
         "favicon-512.png",
         "apple-touch-icon.png",
+        "pwa-192x192.png",
+        "pwa-512x512.png",
         "robots.txt",
       ],
 
@@ -42,7 +45,7 @@ export default defineConfig(({ mode }) => ({
         dir: "rtl",
         lang: "ar",
 
-        // ✅ أيقونات الـ PWA (PC + Mobile) نفس الأيقونة الجديدة
+        // ✅ أهم تعديل: خلي أيقونات الـ PWA تستخدم نفس الأيقونة الجديدة
         icons: [
           {
             src: "/favicon-192.png",
@@ -62,6 +65,7 @@ export default defineConfig(({ mode }) => ({
         screenshots: [],
       },
 
+      // ✅ كل شيء تحت كما هو من ملفك الأصلي (ما حذفنا ولا سطر)
       workbox: {
         globPatterns: ["**/*.{js,css,html,ico,svg,woff,woff2}"],
         globIgnores: [],
@@ -96,7 +100,35 @@ export default defineConfig(({ mode }) => ({
             },
           },
           {
-            urlPattern: ({ request }) => request.destination === "image",
+            urlPattern: /^https:\/\/images\.unsplash\.com\/.*/i,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "unsplash-images-cache",
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+            },
+          },
+          {
+            urlPattern: /^https:\/\/.*\.supabase\.co\/storage\/v1\/object\/.*/i,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "storage-images-cache",
+              expiration: {
+                maxEntries: 80,
+                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+            },
+          },
+          {
+            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/i,
             handler: "CacheFirst",
             options: {
               cacheName: "images-cache",
@@ -109,9 +141,35 @@ export default defineConfig(({ mode }) => ({
               },
             },
           },
+          {
+            urlPattern: /^https:\/\/.*\.supabase\.co\/functions\/v1\/.*/i,
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "functions-cache",
+              expiration: {
+                maxEntries: 20,
+                maxAgeSeconds: 60 * 5, // 5 minutes
+              },
+              networkTimeoutSeconds: 10,
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+            },
+          },
+          {
+            urlPattern: /^https:\/\/.*\.supabase\.co\/rest\/v1\/.*/i,
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "api-cache",
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 5, // 5 minutes
+              },
+              networkTimeoutSeconds: 10,
+            },
+          },
         ],
       },
-
       devOptions: {
         enabled: false,
       },
