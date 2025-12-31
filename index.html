@@ -4,23 +4,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
 
-    <!-- ✅ Favicons (بدّلنا القديم لملفاتك الجديدة) -->
-    <link rel="icon" href="/favicon.ico" sizes="any" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" type="image/png" href="/favicon-32.png" sizes="32x32" />
+    <!-- ✅ Favicons (Tab Icon) - من public/ -->
+    <link rel="icon" href="%BASE_URL%favicon.ico" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
+    <link rel="icon" type="image/png" href="%BASE_URL%favicon-32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="%BASE_URL%favicon-48.png" sizes="48x48" />
 
-    <!-- PWA Meta Tags -->
+    <!-- ✅ Apple Touch Icon (iOS) -->
+    <link rel="apple-touch-icon" href="%BASE_URL%apple-touch-icon.png" />
+
+    <!-- ✅ PWA Manifest -->
+    <link rel="manifest" href="%BASE_URL%manifest.webmanifest" />
     <meta name="theme-color" content="#0d1117" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="wekicode" />
-
-    <!-- ✅ Apple Touch Icon (للجوال) -->
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-
-    <link rel="manifest" href="/manifest.webmanifest" />
-
-    <!-- Fonts are self-hosted in /fonts/ for consistent offline/PWA rendering -->
 
     <title>wekicode - حاضنة أعمال للمبرمجين | غزة، فلسطين 🇵🇸</title>
     <meta
@@ -32,20 +30,18 @@
 
     <!-- Open Graph -->
     <meta property="og:title" content="wekicode - حاضنة أعمال للمبرمجين" />
-    <meta property="og:description" content="منصة متكاملة للمبرمجين والطلاب في فلسطين" />
+    <meta property="og:description" content="منصة متكاملة للمبرمجين والطلاب في فلسطين. تعلم، احصل على فرص، واكسب نقاط." />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://wekicode.com" />
-
-    <!-- ✅ خلي OG/Twitter نفس أيقونتك الجديدة -->
-    <meta property="og:image" content="/favicon-512.png" />
+    <meta property="og:image" content="%BASE_URL%pwa-512.png" />
     <meta property="og:locale" content="ar_PS" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="wekicode - حاضنة أعمال للمبرمجين" />
     <meta name="twitter:description" content="منصة متكاملة للمبرمجين والطلاب في فلسطين" />
-    <meta name="twitter:image" content="/favicon-512.png" />
+    <meta name="twitter:image" content="%BASE_URL%pwa-512.png" />
   </head>
+
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>

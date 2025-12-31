@@ -16,7 +16,7 @@ export default defineConfig(({ mode }) => ({
     VitePWA({
       registerType: "autoUpdate",
 
-      // ✅ تعديل بسيط: أضفنا ملفات الأيقونات الجديدة (وتركنا القديمة كمان)
+      // ✅ أضفنا فقط ملفات الأيقونات الجديدة + تركنا القديمة إن وجدت
       includeAssets: [
         "favicon.png",
         "favicon.ico",
@@ -27,6 +27,13 @@ export default defineConfig(({ mode }) => ({
         "favicon-192.png",
         "favicon-512.png",
         "apple-touch-icon.png",
+
+        // ✅ Pack v2
+        "pwa-192.png",
+        "pwa-512.png",
+        "pwa-maskable-192.png",
+        "pwa-maskable-512.png",
+
         "pwa-192x192.png",
         "pwa-512x512.png",
         "robots.txt",
@@ -45,19 +52,31 @@ export default defineConfig(({ mode }) => ({
         dir: "rtl",
         lang: "ar",
 
-        // ✅ أهم تعديل: خلي أيقونات الـ PWA تستخدم نفس الأيقونة الجديدة
+        // ✅ أهم تعديل: أيقونات PWA الجديدة (واضحة + Maskable)
         icons: [
           {
-            src: "/favicon-192.png",
+            src: "pwa-192.png",
             sizes: "192x192",
             type: "image/png",
-            purpose: "any maskable",
+            purpose: "any",
           },
           {
-            src: "/favicon-512.png",
+            src: "pwa-512.png",
             sizes: "512x512",
             type: "image/png",
-            purpose: "any maskable",
+            purpose: "any",
+          },
+          {
+            src: "pwa-maskable-192.png",
+            sizes: "192x192",
+            type: "image/png",
+            purpose: "maskable",
+          },
+          {
+            src: "pwa-maskable-512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "maskable",
           },
         ],
 
@@ -65,9 +84,9 @@ export default defineConfig(({ mode }) => ({
         screenshots: [],
       },
 
-      // ✅ كل شيء تحت كما هو من ملفك الأصلي (ما حذفنا ولا سطر)
+      // ✅ تركنا إعداداتك كما هي (Unsplash + Supabase + Images + API + Functions)
       workbox: {
-        globPatterns: ["**/*.{js,css,html,ico,svg,woff,woff2}"],
+        globPatterns: ["**/*.{js,css,html,ico,svg,woff,woff2,png,jpg,jpeg,webp}"],
         globIgnores: [],
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
         runtimeCaching: [
@@ -78,11 +97,9 @@ export default defineConfig(({ mode }) => ({
               cacheName: "google-fonts-cache",
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
+                maxAgeSeconds: 60 * 60 * 24 * 365,
               },
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
+              cacheableResponse: { statuses: [0, 200] },
             },
           },
           {
@@ -92,11 +109,9 @@ export default defineConfig(({ mode }) => ({
               cacheName: "gstatic-fonts-cache",
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
+                maxAgeSeconds: 60 * 60 * 24 * 365,
               },
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
+              cacheableResponse: { statuses: [0, 200] },
             },
           },
           {
@@ -106,11 +121,9 @@ export default defineConfig(({ mode }) => ({
               cacheName: "unsplash-images-cache",
               expiration: {
                 maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+                maxAgeSeconds: 60 * 60 * 24 * 30,
               },
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
+              cacheableResponse: { statuses: [0, 200] },
             },
           },
           {
@@ -120,11 +133,9 @@ export default defineConfig(({ mode }) => ({
               cacheName: "storage-images-cache",
               expiration: {
                 maxEntries: 80,
-                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+                maxAgeSeconds: 60 * 60 * 24 * 30,
               },
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
+              cacheableResponse: { statuses: [0, 200] },
             },
           },
           {
@@ -134,11 +145,9 @@ export default defineConfig(({ mode }) => ({
               cacheName: "images-cache",
               expiration: {
                 maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+                maxAgeSeconds: 60 * 60 * 24 * 30,
               },
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
+              cacheableResponse: { statuses: [0, 200] },
             },
           },
           {
@@ -148,12 +157,10 @@ export default defineConfig(({ mode }) => ({
               cacheName: "functions-cache",
               expiration: {
                 maxEntries: 20,
-                maxAgeSeconds: 60 * 5, // 5 minutes
+                maxAgeSeconds: 60 * 5,
               },
               networkTimeoutSeconds: 10,
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
+              cacheableResponse: { statuses: [0, 200] },
             },
           },
           {
@@ -163,18 +170,20 @@ export default defineConfig(({ mode }) => ({
               cacheName: "api-cache",
               expiration: {
                 maxEntries: 50,
-                maxAgeSeconds: 60 * 5, // 5 minutes
+                maxAgeSeconds: 60 * 5,
               },
               networkTimeoutSeconds: 10,
             },
           },
         ],
       },
+
       devOptions: {
         enabled: false,
       },
     }),
   ].filter(Boolean),
+
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
