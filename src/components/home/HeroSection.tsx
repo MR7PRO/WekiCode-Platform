@@ -23,22 +23,23 @@ export function HeroSection() {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-success/20 border border-success/30 mb-8 animate-fade-in">
             <span className="text-lg">🇵🇸</span>
-            <span className="text-sm font-medium text-success">
-              صنع في فلسطين - من غزة للعالم
-            </span>
+            <span className="text-sm font-medium text-success">صنع في فلسطين - من غزة للعالم</span>
           </div>
 
           {/* Main Heading */}
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-black leading-tight mb-6 animate-slide-up">
             <span className="text-foreground">منصة </span>
 
-            {/* wekicode styling like navbar (size unchanged) */}
-            <span className="inline-block">
+            {/* WekiCode (same size) + hover glow only on the word */}
+            <span
+              className="inline-block cursor-default transition-all duration-300
+                         hover:drop-shadow-[0_0_22px_rgba(0,200,255,0.35)]"
+            >
               <span className="bg-gradient-to-b from-sky-300 via-blue-500 to-blue-700 bg-clip-text text-transparent">
-                weki
+                Weki
               </span>
               <span className="bg-gradient-to-b from-amber-300 via-orange-500 to-orange-700 bg-clip-text text-transparent">
-                code
+                Code
               </span>
             </span>
 
@@ -51,9 +52,8 @@ export function HeroSection() {
             className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 animate-slide-up"
             style={{ animationDelay: "0.1s" }}
           >
-            منصة وحاضنة أعمال فلسطينية في قطاع غزة توفر للطلبة والفريلانسرز
-            مساحة عمل متكاملة مع كهرباء وإنترنت سريع، فرص عمل، مشاركة المعرفة
-            ونظام نقاط تفاعلي.
+            منصة وحاضنة أعمال فلسطينية في قطاع غزة توفر للطلبة والفريلانسرز مساحة عمل متكاملة
+            مع كهرباء وإنترنت سريع، فرص عمل، مشاركة المعرفة ونظام نقاط تفاعلي.
           </p>
 
           {/* CTA Buttons */}
@@ -81,30 +81,22 @@ export function HeroSection() {
           >
             <div className="glass rounded-xl p-4 md:p-6 hover-lift">
               <Users className="w-8 h-8 text-primary mx-auto mb-2" />
-              <div className="text-2xl md:text-3xl font-bold text-foreground">
-                15K+
-              </div>
+              <div className="text-2xl md:text-3xl font-bold text-foreground">15K+</div>
               <div className="text-sm text-muted-foreground">مبرمج نشط</div>
             </div>
             <div className="glass rounded-xl p-4 md:p-6 hover-lift">
               <Zap className="w-8 h-8 text-accent mx-auto mb-2" />
-              <div className="text-2xl md:text-3xl font-bold text-foreground">
-                2.5K+
-              </div>
+              <div className="text-2xl md:text-3xl font-bold text-foreground">2.5K+</div>
               <div className="text-sm text-muted-foreground">فرصة عمل</div>
             </div>
             <div className="glass rounded-xl p-4 md:p-6 hover-lift">
               <Award className="w-8 h-8 text-success mx-auto mb-2" />
-              <div className="text-2xl md:text-3xl font-bold text-foreground">
-                500+
-              </div>
+              <div className="text-2xl md:text-3xl font-bold text-foreground">500+</div>
               <div className="text-sm text-muted-foreground">مادة تعليمية</div>
             </div>
             <div className="glass rounded-xl p-4 md:p-6 hover-lift">
               <Sparkles className="w-8 h-8 text-warning mx-auto mb-2" />
-              <div className="text-2xl md:text-3xl font-bold text-foreground">
-                50M+
-              </div>
+              <div className="text-2xl md:text-3xl font-bold text-foreground">50M+</div>
               <div className="text-sm text-muted-foreground">نقطة موزعة</div>
             </div>
           </div>

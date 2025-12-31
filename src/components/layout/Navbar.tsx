@@ -1,12 +1,12 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { 
-  Code2, 
-  HelpCircle, 
-  Briefcase, 
-  BookOpen, 
-  Gift, 
-  User, 
+import {
+  Code2,
+  HelpCircle,
+  Briefcase,
+  BookOpen,
+  Gift,
+  User,
   Menu,
   X,
   LogOut,
@@ -58,33 +58,32 @@ export function Navbar() {
     <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-border/50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link
-            to="/"
-            className="group inline-flex items-center gap-3 rounded-2xl px-6 py-3
-                       bg-slate-950/40 backdrop-blur-md
-                       border border-cyan-400/15
-                       shadow-[0_0_0px_rgba(0,200,255,0)]
-                       transition-all duration-300
-                       hover:border-cyan-400/30
-                       hover:shadow-[0_0_30px_rgba(0,200,255,0.25)]"
-          >
-            <img 
-              src={wekicodeLogo} 
-              alt="WekiCode Logo" 
-              className="w-10 h-10 object-contain transition-transform duration-300
-                         group-hover:scale-105 drop-shadow-[0_0_12px_rgba(255,170,0,0.20)]"
-            />
-
-            {/* Text colors match the WC logo: W = blue gradient, C = orange gradient */}
-            <span className="text-2xl font-extrabold tracking-tight">
-              <span className="bg-gradient-to-b from-sky-300 via-blue-500 to-blue-700 bg-clip-text text-transparent">
-                Weki
-              </span>
-              <span className="bg-gradient-to-b from-amber-300 via-orange-500 to-orange-700 bg-clip-text text-transparent">
-                Code
+          {/* Logo (NO box) */}
+          <Link to="/" className="flex items-center gap-3">
+            {/* Word glow only on hover */}
+            <span
+              className="inline-block cursor-default transition-all duration-300
+                         hover:drop-shadow-[0_0_18px_rgba(0,200,255,0.35)]"
+            >
+              <span className="text-2xl font-extrabold tracking-tight">
+                <span className="bg-gradient-to-b from-sky-300 via-blue-500 to-blue-700 bg-clip-text text-transparent">
+                  Weki
+                </span>
+                <span className="bg-gradient-to-b from-amber-300 via-orange-500 to-orange-700 bg-clip-text text-transparent">
+                  Code
+                </span>
               </span>
             </span>
+
+            {/* Icon bigger / clearer */}
+            <img
+              src={wekicodeLogo}
+              alt="WekiCode Logo"
+              className="w-11 h-11 object-contain
+                         transition-transform duration-300
+                         hover:scale-105
+                         drop-shadow-[0_0_12px_rgba(255,170,0,0.25)]"
+            />
           </Link>
 
           {/* Desktop Navigation */}
@@ -115,7 +114,7 @@ export function Navbar() {
               <>
                 {/* Notifications */}
                 <NotificationBell />
-                
+
                 {/* Progress Widget - Game-like level indicator */}
                 <ProgressWidget />
 
@@ -133,7 +132,7 @@ export function Navbar() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-56">
                     <div className="flex items-center gap-2 p-2">
-                      <Avatar className="h-8 w-8">
+                      <Avatar className="h-8 h-8 w-8">
                         <AvatarImage src={profile?.avatar_url ?? undefined} />
                         <AvatarFallback className="bg-primary text-primary-foreground text-xs">
                           {getInitials(profile?.full_name)}
@@ -201,9 +200,9 @@ export function Navbar() {
                 );
               })}
               <div className="flex items-center justify-between pt-4 border-t border-border/50">
-              {user ? (
-                <>
-                  <ProgressWidget />
+                {user ? (
+                  <>
+                    <ProgressWidget />
                     <div className="flex items-center gap-2">
                       <Link to="/profile" onClick={() => setIsOpen(false)}>
                         <Button variant="ghost" size="sm">
