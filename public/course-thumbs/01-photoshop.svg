@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#22d3ee" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#60a5fa" stop-opacity="0.18"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="600" fill="#0b1220"/>
+  <rect width="1200" height="600" fill="url(#g)"/>
+  <g fill="none" stroke="#22d3ee" stroke-opacity="0.7" stroke-width="12">
+    <circle cx="410" cy="300" r="120"/>
+    <path d="M530 300 H720" />
+    <path d="M720 300 C780 300 820 260 820 210" />
+    <path d="M820 210 V170" />
+    <rect x="760" y="130" width="110" height="90" rx="18"/>
+  </g>
+  <g fill="#e5e7eb" opacity="0.92" font-family="Arial" font-size="64" font-weight="800">
+    <text x="560" y="420">Photoshop</text>
+  </g>
+</svg>

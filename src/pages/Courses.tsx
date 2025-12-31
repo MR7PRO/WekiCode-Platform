@@ -1,28 +1,30 @@
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
-import { 
-  BookOpen, 
-  PlayCircle, 
-  Clock, 
+import {
+  BookOpen,
+  Clock,
   Users,
   Search,
   Filter,
   Star,
   Award,
   FileText,
-  Video,
   Coins,
-  Plus,
   CheckCircle,
   Play,
   Heart,
-  HeartOff,
   Send,
-  Loader2
+  Loader2,
 } from "lucide-react";
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
@@ -30,7 +32,15 @@ import { Progress } from "@/components/ui/progress";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
-const categories = ["الكل", "تطوير الويب", "تطوير الموبايل", "علم البيانات", "DevOps", "تصميم", "ذكاء اصطناعي"];
+const categories = [
+  "الكل",
+  "تطوير الويب",
+  "تطوير الموبايل",
+  "علم البيانات",
+  "DevOps",
+  "تصميم",
+  "ذكاء اصطناعي",
+];
 
 interface Course {
   id: string;
@@ -56,29 +66,126 @@ interface Enrollment {
   completed_lessons: number[];
 }
 
-// --- Image helpers ---------------------------------------------------------
-// In production (Netlify/Docker nginx.conf) CSP allows only:
-//   img-src 'self' data: https: blob:
-// So any http:// image will be blocked. Also relative paths can break on routes
-// like /courses if the value doesn't start with '/'.
-const DEFAULT_COURSE_IMAGE = `${import.meta.env.BASE_URL || '/'}placeholder.svg`;
+// ======================= LOCAL COURSE THUMBS (9 images) =======================
+// ضع ملفات الصور داخل: public/course-thumbs/
+// الأسماء المطلوبة بالضبط:
+// 01-photoshop.svg
+// 02-python.svg
+// 03-git.svg
+// 04-devops.svg
+// 05-data.svg
+// 06-web.svg
+// 07-mobile.svg
+// 08-ai.svg
+// 09-database.svg
 
-const resolveCourseImage = (raw?: string | null) => {
-  if (!raw) return DEFAULT_COURSE_IMAGE;
-  const url = String(raw).trim();
-  if (!url) return DEFAULT_COURSE_IMAGE;
+const BASE_URL = import.meta.env.BASE_URL || "/";
 
-  // Upgrade http -> https to satisfy CSP and avoid mixed content.
-  if (url.startsWith('http://')) return url.replace(/^http:\/\//, 'https://');
+const localThumb = (file: string) => `${BASE_URL}course-thumbs/${file}`;
 
-  // Allow already-absolute URLs and data/blob.
-  if (url.startsWith('https://') || url.startsWith('data:') || url.startsWith('blob:')) return url;
+const pickLocalThumbByText = (course: Course) => {
+  const text = `${course.title} ${course.description} ${course.category}`.toLowerCase();
 
-  // Treat everything else as a local/public asset path.
-  const base = import.meta.env.BASE_URL || '/';
-  const clean = url.replace(/^\/+/, '');
-  return `${base}${clean}`;
+  // Photoshop / Design
+  if (
+    text.includes("photoshop") ||
+    text.includes("فوتوشوب") ||
+    text.includes("تصميم") ||
+    text.includes("design")
+  ) {
+    return localThumb("01-photoshop.svg");
+  }
+
+  // Python
+  if (text.includes("python") || text.includes("بايثون")) {
+    return localThumb("02-python.svg");
+  }
+
+  // Git / GitHub
+  if (text.includes("git") || text.includes("github") || text.includes("جيت")) {
+    return localThumb("03-git.svg");
+  }
+
+  // DevOps / Docker / CI/CD / Linux
+  if (
+    text.includes("devops") ||
+    text.includes("docker") ||
+    text.includes("cicd") ||
+    text.includes("ci/cd") ||
+    text.includes("linux") ||
+    text.includes("لينكس")
+  ) {
+    return localThumb("04-devops.svg");
+  }
+
+  // Data Science / Data / ML
+  if (
+    text.includes("data") ||
+    text.includes("علم البيانات") ||
+    text.includes("machine learning") ||
+    text.includes("ml")
+  ) {
+    return localThumb("05-data.svg");
+  }
+
+  // Web / Frontend / React / JS / HTML
+  if (
+    text.includes("web") ||
+    text.includes("frontend") ||
+    text.includes("react") ||
+    text.includes("javascript") ||
+    text.includes("js") ||
+    text.includes("html") ||
+    text.includes("css") ||
+    text.includes("ويب")
+  ) {
+    return localThumb("06-web.svg");
+  }
+
+  // Mobile / Android / Flutter
+  if (
+    text.includes("mobile") ||
+    text.includes("android") ||
+    text.includes("flutter") ||
+    text.includes("موبايل") ||
+    text.includes("اندرويد")
+  ) {
+    return localThumb("07-mobile.svg");
+  }
+
+  // AI / ChatGPT / LLM
+  if (text.includes("ai") || text.includes("ذكاء") || text.includes("chatgpt") || text.includes("llm")) {
+    return localThumb("08-ai.svg");
+  }
+
+  // Database / SQL / Supabase / Postgres
+  if (
+    text.includes("database") ||
+    text.includes("sql") ||
+    text.includes("supabase") ||
+    text.includes("postgres") ||
+    text.includes("قاعدة بيانات")
+  ) {
+    return localThumb("09-database.svg");
+  }
+
+  // لو ما انعرف الموضوع لأي سبب → صورة عامة
+  return localThumb("09-database.svg");
 };
+
+const resolveCourseImage = (course: Course) => {
+  const raw = (course.image_url || "").trim();
+
+  // لو فيه رابط صورة شغال https استخدمه
+  if (raw.startsWith("https://") || raw.startsWith("data:") || raw.startsWith("blob:")) return raw;
+
+  // لو http خليه https (CSP بالاستضافة غالبًا يمنع http)
+  if (raw.startsWith("http://")) return raw.replace(/^http:\/\//, "https://");
+
+  // غير هيك: استخدم صورة محلية حسب موضوع الكورس
+  return pickLocalThumbByText(course);
+};
+// ============================================================================
 
 export default function Courses() {
   const { user, profile, refreshProfile } = useAuth();
@@ -90,8 +197,7 @@ export default function Courses() {
   const [favoriteCourses, setFavoriteCourses] = useState<string[]>([]);
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  
-  // New course form
+
   const [newCourse, setNewCourse] = useState({
     title: "",
     description: "",
@@ -99,7 +205,7 @@ export default function Courses() {
     level: "مبتدئ",
     duration: "",
     type: "فيديو",
-    link: ""
+    link: "",
   });
 
   useEffect(() => {
@@ -108,17 +214,18 @@ export default function Courses() {
       fetchEnrollments();
       fetchFavorites();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const fetchCourses = async () => {
     setLoading(true);
     const { data, error } = await supabase
-      .from('courses')
-      .select('*')
-      .order('students_count', { ascending: false });
+      .from("courses")
+      .select("*")
+      .order("students_count", { ascending: false });
 
     if (error) {
-      console.error('Error fetching courses:', error);
+      console.error("Error fetching courses:", error);
       setLoading(false);
       return;
     }
@@ -130,36 +237,40 @@ export default function Courses() {
   const fetchEnrollments = async () => {
     if (!user) return;
     const { data } = await supabase
-      .from('course_enrollments')
-      .select('course_id, progress, completed_lessons')
-      .eq('user_id', user.id);
+      .from("course_enrollments")
+      .select("course_id, progress, completed_lessons")
+      .eq("user_id", user.id);
 
     if (data) {
-      setEnrollments(data.map(e => ({
-        course_id: e.course_id,
-        progress: e.progress || 0,
-        completed_lessons: e.completed_lessons || []
-      })));
+      setEnrollments(
+        data.map((e) => ({
+          course_id: e.course_id,
+          progress: e.progress || 0,
+          completed_lessons: e.completed_lessons || [],
+        }))
+      );
     }
   };
 
   const fetchFavorites = async () => {
     if (!user) return;
     const { data } = await supabase
-      .from('user_favorites')
-      .select('course_id')
-      .eq('user_id', user.id)
-      .not('course_id', 'is', null);
+      .from("user_favorites")
+      .select("course_id")
+      .eq("user_id", user.id)
+      .not("course_id", "is", null);
 
     if (data) {
-      setFavoriteCourses(data.map(f => f.course_id!));
+      setFavoriteCourses(data.map((f) => f.course_id!));
     }
   };
 
-  const filteredCourses = courses.filter(c => {
-    const matchesCategory = selectedCategory === "الكل" || c.category === selectedCategory;
-    const matchesSearch = c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          c.description.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredCourses = courses.filter((c) => {
+    const matchesCategory =
+      selectedCategory === "الكل" || c.category === selectedCategory;
+    const q = searchQuery.toLowerCase();
+    const matchesSearch =
+      c.title.toLowerCase().includes(q) || c.description.toLowerCase().includes(q);
     return matchesCategory && matchesSearch;
   });
 
@@ -168,13 +279,13 @@ export default function Courses() {
       toast({
         title: "يجب تسجيل الدخول",
         description: "قم بتسجيل الدخول للتسجيل في الدورة",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
 
-    const isEnrolled = enrollments.some(e => e.course_id === course.id);
-    
+    const isEnrolled = enrollments.some((e) => e.course_id === course.id);
+
     if (isEnrolled) {
       toast({
         title: "استئناف الدورة 📚",
@@ -183,51 +294,51 @@ export default function Courses() {
       return;
     }
 
-    // Database trigger handles points deduction atomically (prevents race conditions)
-    const { error } = await supabase
-      .from('course_enrollments')
-      .insert({
-        user_id: user.id,
-        course_id: course.id,
-        progress: 0,
-        completed_lessons: []
-      });
+    const { error } = await supabase.from("course_enrollments").insert({
+      user_id: user.id,
+      course_id: course.id,
+      progress: 0,
+      completed_lessons: [],
+    });
 
     if (error) {
-      // Handle insufficient points error from database trigger
-      if (error.message?.includes('Insufficient points')) {
+      if (error.message?.includes("Insufficient points")) {
         const { data: freshProfile } = await supabase
-          .from('profiles')
-          .select('points')
-          .eq('user_id', user.id)
+          .from("profiles")
+          .select("points")
+          .eq("user_id", user.id)
           .maybeSingle();
-        
+
         const currentPoints = freshProfile?.points ?? 0;
         const neededPoints = course.price ?? 0;
-        
+
         toast({
           title: "نقاط غير كافية",
           description: `لديك ${currentPoints} نقطة وتحتاج ${neededPoints} نقطة`,
-          variant: "destructive"
+          variant: "destructive",
         });
       } else {
         toast({
           title: "خطأ",
           description: "حدث خطأ أثناء التسجيل",
-          variant: "destructive"
+          variant: "destructive",
         });
       }
       return;
     }
 
-    setEnrollments([...enrollments, { course_id: course.id, progress: 0, completed_lessons: [] }]);
-    
-    // Refresh profile to update points in navbar
+    setEnrollments([
+      ...enrollments,
+      { course_id: course.id, progress: 0, completed_lessons: [] },
+    ]);
+
     await refreshProfile();
-    
+
     toast({
       title: "تم التسجيل بنجاح! 🎉",
-      description: course.is_free ? "ستحصل على نقاط عند إكمال الدورة" : `تم خصم ${course.price} نقطة`,
+      description: course.is_free
+        ? "ستحصل على نقاط عند إكمال الدورة"
+        : `تم خصم ${course.price} نقطة`,
     });
   };
 
@@ -236,25 +347,26 @@ export default function Courses() {
       toast({
         title: "يجب تسجيل الدخول",
         description: "قم بتسجيل الدخول لإضافة للمفضلة",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
 
     if (favoriteCourses.includes(courseId)) {
       await supabase
-        .from('user_favorites')
+        .from("user_favorites")
         .delete()
-        .eq('user_id', user.id)
-        .eq('course_id', courseId);
-      
-      setFavoriteCourses(favoriteCourses.filter(id => id !== courseId));
+        .eq("user_id", user.id)
+        .eq("course_id", courseId);
+
+      setFavoriteCourses(favoriteCourses.filter((id) => id !== courseId));
       toast({ title: "تم إزالة الدورة من المفضلة" });
     } else {
-      await supabase
-        .from('user_favorites')
-        .insert({ user_id: user.id, course_id: courseId });
-      
+      await supabase.from("user_favorites").insert({
+        user_id: user.id,
+        course_id: courseId,
+      });
+
       setFavoriteCourses([...favoriteCourses, courseId]);
       toast({ title: "تم إضافة الدورة للمفضلة ❤️" });
     }
@@ -265,7 +377,7 @@ export default function Courses() {
       toast({
         title: "يجب تسجيل الدخول",
         description: "قم بتسجيل الدخول لمشاركة محتوى",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -274,32 +386,30 @@ export default function Courses() {
       toast({
         title: "خطأ",
         description: "يرجى ملء جميع الحقول المطلوبة",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
 
     setSubmitting(true);
 
-    const { error } = await supabase
-      .from('courses')
-      .insert({
-        user_id: user.id,
-        title: newCourse.title,
-        description: newCourse.description,
-        instructor: "أنت",
-        category: newCourse.category,
-        level: newCourse.level,
-        duration: newCourse.duration || null,
-        is_free: true,
-        lessons_count: 10
-      });
+    const { error } = await supabase.from("courses").insert({
+      user_id: user.id,
+      title: newCourse.title,
+      description: newCourse.description,
+      instructor: "أنت",
+      category: newCourse.category,
+      level: newCourse.level,
+      duration: newCourse.duration || null,
+      is_free: true,
+      lessons_count: 10,
+    });
 
     if (error) {
       toast({
         title: "خطأ",
         description: "حدث خطأ أثناء نشر المحتوى",
-        variant: "destructive"
+        variant: "destructive",
       });
       setSubmitting(false);
       return;
@@ -310,38 +420,43 @@ export default function Courses() {
       description: "حصلت على +25 نقطة للمشاركة",
     });
 
-    setNewCourse({ title: "", description: "", category: "تطوير الويب", level: "مبتدئ", duration: "", type: "فيديو", link: "" });
+    setNewCourse({
+      title: "",
+      description: "",
+      category: "تطوير الويب",
+      level: "مبتدئ",
+      duration: "",
+      type: "فيديو",
+      link: "",
+    });
     setIsShareDialogOpen(false);
     setSubmitting(false);
     fetchCourses();
-    
-    // Refresh profile to get updated points
     await refreshProfile();
   };
 
   const getEnrollment = (courseId: string) => {
-    return enrollments.find(e => e.course_id === courseId);
+    return enrollments.find((e) => e.course_id === courseId);
   };
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       <main className="pt-24 pb-16">
         <div className="container mx-auto px-4">
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <div>
               <h1 className="text-3xl md:text-4xl font-bold mb-2">
-                <span className="text-foreground">المواد</span>
-                {" "}
+                <span className="text-foreground">المواد</span>{" "}
                 <span className="text-gradient-primary">التعليمية</span>
               </h1>
               <p className="text-muted-foreground">
                 تعلم من دورات ومقالات مشتركة من مجتمع المبرمجين
               </p>
             </div>
-            
+
             <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
               <DialogTrigger asChild>
                 <Button variant="success" size="lg">
@@ -353,43 +468,67 @@ export default function Courses() {
                 <DialogHeader>
                   <DialogTitle className="text-xl">شارك محتوى تعليمي</DialogTitle>
                 </DialogHeader>
+
                 <div className="space-y-4 mt-4">
                   <div>
-                    <label className="text-sm font-medium text-foreground mb-2 block">عنوان المحتوى *</label>
+                    <label className="text-sm font-medium text-foreground mb-2 block">
+                      عنوان المحتوى *
+                    </label>
                     <Input
                       placeholder="مثال: دورة تعلم JavaScript"
                       value={newCourse.title}
-                      onChange={(e) => setNewCourse({...newCourse, title: e.target.value})}
+                      onChange={(e) =>
+                        setNewCourse({ ...newCourse, title: e.target.value })
+                      }
                     />
                   </div>
+
                   <div>
-                    <label className="text-sm font-medium text-foreground mb-2 block">الوصف *</label>
+                    <label className="text-sm font-medium text-foreground mb-2 block">
+                      الوصف *
+                    </label>
                     <Textarea
                       placeholder="اشرح ماذا سيتعلم الطلاب..."
                       rows={3}
                       value={newCourse.description}
-                      onChange={(e) => setNewCourse({...newCourse, description: e.target.value})}
+                      onChange={(e) =>
+                        setNewCourse({ ...newCourse, description: e.target.value })
+                      }
                     />
                   </div>
+
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm font-medium text-foreground mb-2 block">التصنيف</label>
+                      <label className="text-sm font-medium text-foreground mb-2 block">
+                        التصنيف
+                      </label>
                       <select
                         className="w-full h-10 rounded-lg bg-secondary border border-border px-3"
                         value={newCourse.category}
-                        onChange={(e) => setNewCourse({...newCourse, category: e.target.value})}
+                        onChange={(e) =>
+                          setNewCourse({ ...newCourse, category: e.target.value })
+                        }
                       >
-                        {categories.filter(c => c !== "الكل").map(cat => (
-                          <option key={cat} value={cat}>{cat}</option>
-                        ))}
+                        {categories
+                          .filter((c) => c !== "الكل")
+                          .map((cat) => (
+                            <option key={cat} value={cat}>
+                              {cat}
+                            </option>
+                          ))}
                       </select>
                     </div>
+
                     <div>
-                      <label className="text-sm font-medium text-foreground mb-2 block">المستوى</label>
+                      <label className="text-sm font-medium text-foreground mb-2 block">
+                        المستوى
+                      </label>
                       <select
                         className="w-full h-10 rounded-lg bg-secondary border border-border px-3"
                         value={newCourse.level}
-                        onChange={(e) => setNewCourse({...newCourse, level: e.target.value})}
+                        onChange={(e) =>
+                          setNewCourse({ ...newCourse, level: e.target.value })
+                        }
                       >
                         <option value="مبتدئ">مبتدئ</option>
                         <option value="متوسط">متوسط</option>
@@ -397,36 +536,57 @@ export default function Courses() {
                       </select>
                     </div>
                   </div>
+
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm font-medium text-foreground mb-2 block">النوع</label>
+                      <label className="text-sm font-medium text-foreground mb-2 block">
+                        النوع
+                      </label>
                       <select
                         className="w-full h-10 rounded-lg bg-secondary border border-border px-3"
                         value={newCourse.type}
-                        onChange={(e) => setNewCourse({...newCourse, type: e.target.value})}
+                        onChange={(e) =>
+                          setNewCourse({ ...newCourse, type: e.target.value })
+                        }
                       >
                         <option value="فيديو">فيديو</option>
                         <option value="مقال">مقال</option>
                       </select>
                     </div>
+
                     <div>
-                      <label className="text-sm font-medium text-foreground mb-2 block">المدة</label>
+                      <label className="text-sm font-medium text-foreground mb-2 block">
+                        المدة
+                      </label>
                       <Input
                         placeholder="مثال: 5 ساعات"
                         value={newCourse.duration}
-                        onChange={(e) => setNewCourse({...newCourse, duration: e.target.value})}
+                        onChange={(e) =>
+                          setNewCourse({ ...newCourse, duration: e.target.value })
+                        }
                       />
                     </div>
                   </div>
+
                   <div>
-                    <label className="text-sm font-medium text-foreground mb-2 block">رابط المحتوى</label>
+                    <label className="text-sm font-medium text-foreground mb-2 block">
+                      رابط المحتوى
+                    </label>
                     <Input
                       placeholder="https://..."
                       value={newCourse.link}
-                      onChange={(e) => setNewCourse({...newCourse, link: e.target.value})}
+                      onChange={(e) =>
+                        setNewCourse({ ...newCourse, link: e.target.value })
+                      }
                     />
                   </div>
-                  <Button className="w-full" variant="hero" onClick={handleShareCourse} disabled={submitting}>
+
+                  <Button
+                    className="w-full"
+                    variant="hero"
+                    onClick={handleShareCourse}
+                    disabled={submitting}
+                  >
                     {submitting ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
                     ) : (
@@ -441,23 +601,32 @@ export default function Courses() {
             </Dialog>
           </div>
 
-          {/* Stats Cards */}
+          {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             <div className="glass rounded-xl p-4 border-border/50">
               <BookOpen className="w-6 h-6 text-primary mb-2" />
               <div className="text-2xl font-bold text-foreground">{courses.length}</div>
               <div className="text-sm text-muted-foreground">دورة</div>
             </div>
+
             <div className="glass rounded-xl p-4 border-border/50">
               <FileText className="w-6 h-6 text-accent mb-2" />
-              <div className="text-2xl font-bold text-foreground">{courses.filter(c => c.is_free).length}</div>
+              <div className="text-2xl font-bold text-foreground">
+                {courses.filter((c) => c.is_free).length}
+              </div>
               <div className="text-sm text-muted-foreground">دورة مجانية</div>
             </div>
+
             <div className="glass rounded-xl p-4 border-border/50">
               <Users className="w-6 h-6 text-success mb-2" />
-              <div className="text-2xl font-bold text-foreground">{courses.reduce((acc, c) => acc + (c.students_count || 0), 0).toLocaleString()}</div>
+              <div className="text-2xl font-bold text-foreground">
+                {courses
+                  .reduce((acc, c) => acc + (c.students_count || 0), 0)
+                  .toLocaleString()}
+              </div>
               <div className="text-sm text-muted-foreground">طالب</div>
             </div>
+
             <div className="glass rounded-xl p-4 border-border/50">
               <Award className="w-6 h-6 text-warning mb-2" />
               <div className="text-2xl font-bold text-foreground">+25</div>
@@ -465,7 +634,7 @@ export default function Courses() {
             </div>
           </div>
 
-          {/* Search & Filter */}
+          {/* Search */}
           <div className="flex flex-col md:flex-row gap-4 mb-6">
             <div className="flex-1 relative">
               <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
@@ -500,7 +669,7 @@ export default function Courses() {
             ))}
           </div>
 
-          {/* Loading State */}
+          {/* Loading */}
           {loading ? (
             <div className="flex items-center justify-center py-20">
               <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -524,20 +693,18 @@ export default function Courses() {
                       {/* Thumbnail */}
                       <div className="relative h-40 overflow-hidden bg-gradient-to-br from-primary/20 to-accent/20">
                         <img
-                          src={resolveCourseImage(course.image_url)}
+                          src={resolveCourseImage(course)}
                           alt={course.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           loading={index < 3 ? "eager" : "lazy"}
                           decoding="async"
                           onError={(e) => {
-                            const img = e.currentTarget;
-                            if (img.dataset.fallbackApplied) return;
-                            img.dataset.fallbackApplied = "1";
-                            img.src = DEFAULT_COURSE_IMAGE;
+                            const img = e.currentTarget as HTMLImageElement;
+                            img.src = pickLocalThumbByText(course);
                           }}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
-                        
+
                         {/* Badges */}
                         <div className="absolute top-3 right-3 flex gap-2">
                           {course.is_free && (
@@ -550,7 +717,7 @@ export default function Courses() {
                           </span>
                         </div>
 
-                        {/* Favorite Button */}
+                        {/* Favorite */}
                         <button
                           onClick={() => toggleFavorite(course.id)}
                           className="absolute top-3 left-3 p-2 rounded-full bg-background/80 hover:bg-background transition-colors"
@@ -562,7 +729,7 @@ export default function Courses() {
                           )}
                         </button>
 
-                        {/* Play Button */}
+                        {/* Play hover */}
                         {isEnrolled && (
                           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                             <button className="w-14 h-14 rounded-full bg-primary flex items-center justify-center shadow-glow">
@@ -591,17 +758,21 @@ export default function Courses() {
                         {/* Instructor */}
                         <div className="flex items-center gap-2 mb-4">
                           <div className="w-8 h-8 rounded-full bg-gradient-primary flex items-center justify-center text-xs font-bold text-primary-foreground">
-                            {course.instructor?.charAt(0) || 'م'}
+                            {course.instructor?.charAt(0) || "م"}
                           </div>
-                          <span className="text-sm text-muted-foreground">{course.instructor}</span>
+                          <span className="text-sm text-muted-foreground">
+                            {course.instructor}
+                          </span>
                         </div>
 
-                        {/* Progress (if enrolled) */}
+                        {/* Progress */}
                         {isEnrolled && enrollment && (
                           <div className="mb-4">
                             <div className="flex justify-between text-sm mb-1">
                               <span className="text-muted-foreground">التقدم</span>
-                              <span className="text-primary font-medium">{enrollment.progress}%</span>
+                              <span className="text-primary font-medium">
+                                {enrollment.progress}%
+                              </span>
                             </div>
                             <Progress value={enrollment.progress} className="h-2" />
                           </div>
@@ -615,7 +786,7 @@ export default function Courses() {
                           </div>
                           <div className="flex items-center gap-1">
                             <Clock className="w-4 h-4" />
-                            <span>{course.duration || 'غير محدد'}</span>
+                            <span>{course.duration || "غير محدد"}</span>
                           </div>
                           <div className="flex items-center gap-1">
                             <Star className="w-4 h-4 text-warning fill-warning" />
@@ -623,10 +794,18 @@ export default function Courses() {
                           </div>
                         </div>
 
-                        {/* Action Button */}
-                        <Button 
-                          variant={isEnrolled ? "secondary" : course.is_free ? "hero" : canAfford ? "outline" : "secondary"} 
-                          size="sm" 
+                        {/* Action */}
+                        <Button
+                          variant={
+                            isEnrolled
+                              ? "secondary"
+                              : course.is_free
+                              ? "hero"
+                              : canAfford
+                              ? "outline"
+                              : "secondary"
+                          }
+                          size="sm"
                           className="w-full"
                           onClick={() => handleEnroll(course)}
                           disabled={!isEnrolled && !course.is_free && !canAfford}

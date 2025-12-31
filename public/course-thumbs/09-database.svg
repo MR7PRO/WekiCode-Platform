@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3b82f6" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#22d3ee" stop-opacity="0.16"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="600" fill="#0b1220"/>
+  <rect width="1200" height="600" fill="url(#g)"/>
+  <g fill="none" stroke="#3b82f6" stroke-opacity="0.75" stroke-width="12">
+    <ellipse cx="430" cy="200" rx="170" ry="55"/>
+    <path d="M260 200 V380 C260 410 335 435 430 435 C525 435 600 410 600 380 V200"/>
+    <ellipse cx="430" cy="380" rx="170" ry="55"/>
+  </g>
+  <g fill="#e5e7eb" opacity="0.92" font-family="Arial" font-size="64" font-weight="800">
+    <text x="720" y="350">Database</text>
+  </g>
+</svg>

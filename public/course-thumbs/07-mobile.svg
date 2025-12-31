@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#34d399" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#22d3ee" stop-opacity="0.18"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="600" fill="#0b1220"/>
+  <rect width="1200" height="600" fill="url(#g)"/>
+  <g fill="none" stroke="#34d399" stroke-opacity="0.75" stroke-width="12">
+    <rect x="430" y="90" width="340" height="420" rx="56"/>
+    <line x1="470" y1="170" x2="730" y2="170"/>
+    <circle cx="600" cy="470" r="18"/>
+  </g>
+  <g fill="#e5e7eb" opacity="0.92" font-family="Arial" font-size="64" font-weight="800">
+    <text x="160" y="360">Mobile</text>
+  </g>
+</svg>
