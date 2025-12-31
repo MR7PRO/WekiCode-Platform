@@ -73,11 +73,17 @@ export function Navbar() {
               src={wekicodeLogo} 
               alt="WekiCode Logo" 
               className="w-10 h-10 object-contain transition-transform duration-300
-                         group-hover:scale-105 drop-shadow-[0_0_10px_rgba(255,200,0,0.25)]"
+                         group-hover:scale-105 drop-shadow-[0_0_12px_rgba(255,170,0,0.20)]"
             />
+
+            {/* Text colors match the WC logo: W = blue gradient, C = orange gradient */}
             <span className="text-2xl font-extrabold tracking-tight">
-              <span className="text-cyan-400">Weki</span>
-              <span className="text-amber-400">Code</span>
+              <span className="bg-gradient-to-b from-sky-300 via-blue-500 to-blue-700 bg-clip-text text-transparent">
+                Weki
+              </span>
+              <span className="bg-gradient-to-b from-amber-300 via-orange-500 to-orange-700 bg-clip-text text-transparent">
+                Code
+              </span>
             </span>
           </Link>
 
