@@ -59,13 +59,26 @@ export function Navbar() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group">
+          <Link
+            to="/"
+            className="group inline-flex items-center gap-3 rounded-2xl px-6 py-3
+                       bg-slate-950/40 backdrop-blur-md
+                       border border-cyan-400/15
+                       shadow-[0_0_0px_rgba(0,200,255,0)]
+                       transition-all duration-300
+                       hover:border-cyan-400/30
+                       hover:shadow-[0_0_30px_rgba(0,200,255,0.25)]"
+          >
             <img 
               src={wekicodeLogo} 
               alt="WekiCode Logo" 
-              className="w-14 h-14 object-contain group-hover:scale-110 transition-transform"
+              className="w-10 h-10 object-contain transition-transform duration-300
+                         group-hover:scale-105 drop-shadow-[0_0_10px_rgba(255,200,0,0.25)]"
             />
-            <span className="text-2xl font-bold text-gradient-primary">wekicode</span>
+            <span className="text-2xl font-extrabold tracking-tight">
+              <span className="text-cyan-400">Weki</span>
+              <span className="text-amber-400">Code</span>
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
