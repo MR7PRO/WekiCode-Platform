@@ -15,7 +15,20 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.png", "robots.txt"],
+
+      // ✅ خلي الـ PWA والكاش ياخدوا نفس أيقونة الموقع الجديدة
+      includeAssets: [
+        "favicon.ico",
+        "favicon.svg",
+        "favicon-16.png",
+        "favicon-32.png",
+        "favicon-48.png",
+        "favicon-192.png",
+        "favicon-512.png",
+        "apple-touch-icon.png",
+        "robots.txt",
+      ],
+
       manifest: {
         name: "wekicode - حاضنة أعمال للمبرمجين",
         short_name: "wekicode",
@@ -28,23 +41,27 @@ export default defineConfig(({ mode }) => ({
         start_url: "/",
         dir: "rtl",
         lang: "ar",
+
+        // ✅ أيقونات الـ PWA (PC + Mobile) نفس الأيقونة الجديدة
         icons: [
           {
-            src: "/pwa-192x192.png",
+            src: "/favicon-192.png",
             sizes: "192x192",
             type: "image/png",
-            purpose: "any maskable"
+            purpose: "any maskable",
           },
           {
-            src: "/pwa-512x512.png",
+            src: "/favicon-512.png",
             sizes: "512x512",
             type: "image/png",
-            purpose: "any maskable"
-          }
+            purpose: "any maskable",
+          },
         ],
+
         categories: ["education", "productivity", "business"],
-        screenshots: []
+        screenshots: [],
       },
+
       workbox: {
         globPatterns: ["**/*.{js,css,html,ico,svg,woff,woff2}"],
         globIgnores: [],
@@ -57,12 +74,12 @@ export default defineConfig(({ mode }) => ({
               cacheName: "google-fonts-cache",
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
+                maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
               },
               cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
+                statuses: [0, 200],
+              },
+            },
           },
           {
             urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
@@ -71,88 +88,34 @@ export default defineConfig(({ mode }) => ({
               cacheName: "gstatic-fonts-cache",
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
+                maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
               },
               cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
-          },
-          {
-            urlPattern: /^https:\/\/images\.unsplash\.com\/.*/i,
-            handler: "CacheFirst",
-            options: {
-              cacheName: "unsplash-images-cache",
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
+                statuses: [0, 200],
               },
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
+            },
           },
           {
-            urlPattern: /^https:\/\/.*\.supabase\.co\/storage\/v1\/object\/.*/i,
-            handler: "CacheFirst",
-            options: {
-              cacheName: "storage-images-cache",
-              expiration: {
-                maxEntries: 80,
-                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
-              },
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
-          },
-          {
-            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/i,
+            urlPattern: ({ request }) => request.destination === "image",
             handler: "CacheFirst",
             options: {
               cacheName: "images-cache",
               expiration: {
                 maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
+                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
               },
               cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
-          },
-          {
-            urlPattern: /^https:\/\/.*\.supabase\.co\/functions\/v1\/.*/i,
-            handler: "NetworkFirst",
-            options: {
-              cacheName: "functions-cache",
-              expiration: {
-                maxEntries: 20,
-                maxAgeSeconds: 60 * 5 // 5 minutes
+                statuses: [0, 200],
               },
-              networkTimeoutSeconds: 10,
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
+            },
           },
-          {
-            urlPattern: /^https:\/\/.*\.supabase\.co\/rest\/v1\/.*/i,
-            handler: "NetworkFirst",
-            options: {
-              cacheName: "api-cache",
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 5 // 5 minutes
-              },
-              networkTimeoutSeconds: 10
-            }
-          }
-        ]
+        ],
       },
+
       devOptions: {
-        enabled: false
-      }
-    })
+        enabled: false,
+      },
+    }),
   ].filter(Boolean),
   resolve: {
     alias: {
