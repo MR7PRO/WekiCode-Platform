@@ -1,0 +1,45 @@
+﻿name: CI - Docker Build & Smoke Test
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          set -eux
+          docker build \
+            --build-arg VITE_SUPABASE_URL="https://example.supabase.co" \
+            --build-arg VITE_SUPABASE_PUBLISHABLE_KEY="dummy-key" \
+            --build-arg VITE_SUPABASE_PROJECT_ID="dummy-project" \
+            -t wekicode-platform:ci .
+
+      - name: Run container
+        run: |
+          set -eux
+          docker run -d --name wekicode -p 8080:80 wekicode-platform:ci
+
+      - name: Smoke test (/health)
+        run: |
+          set -eux
+          for i in 1 2 3 4 5 6 7 8 9 10; do
+            if curl -fsS http://localhost:8080/health; then
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Healthcheck failed"
+          docker logs wekicode || true
+          exit 1
+
+      - name: Cleanup
+        if: always()
+        run: docker rm -f wekicode
