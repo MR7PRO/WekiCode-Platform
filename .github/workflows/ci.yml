@@ -1,4 +1,19 @@
-﻿      - name: Build Docker image
+﻿name: CI - Docker Build & Smoke Test
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
         run: |
           set -eux
           docker build \
@@ -24,3 +39,7 @@
           echo "Healthcheck failed"
           docker logs wekicode || true
           exit 1
+
+      - name: Cleanup
+        if: always()
+        run: docker rm -f wekicode
