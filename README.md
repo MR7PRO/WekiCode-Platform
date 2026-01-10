@@ -87,13 +87,13 @@ Create a file named .env in the project root:
 VITE_SUPABASE_PROJECT_ID="epajjiiuaqjieecvmpln"
 VITE_SUPABASE_PUBLISHABLE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVwYWpqaWl1YXFqaWVlY3ZtcGxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYzMDk2MzIsImV4cCI6MjA4MTg4NTYzMn0.J9X8OXVHC2vTOVFixckZM3so1R3whJe0Gs-WZfQ758M"
 VITE_SUPABASE_URL="https://epajjiiuaqjieecvmpln.supabase.co"
+```
 
 Notes:
 
 * "These are client/public values used by the frontend (anon key)."
 
 * "Do NOT commit secret/service-role keys to GitHub."
-```
 
  -### 3) Run using Docker Compose (recommended)
 Option A — Windows (PowerShell)
@@ -127,36 +127,41 @@ docker compose up -d --build
 
  🛑 Stop the container & Clean up
  * Windows (PowerShell) vs teminal : 
- ```bash
- powershell -ExecutionPolicy Bypass -File .\scripts\down.ps1
- ```
+```bash
+powershell -ExecutionPolicy Bypass -File .\scripts\down.ps1
+```
  * Linux/macOS (Makefile)
-  ```bash
- make down
- ```
+```bash
+make down
+```
  * Manual (Docker Compose)
-  ```bash
- docker compose down --rmi local --volumes --remove-orphans
- ```
+```bash
+docker compose down --rmi local --volumes --remove-orphans
+```
 
  -###🐳 Build & Push Docker Image (Assignment #3 - Production)
  The following commands match what was used during the assignment (PowerShell multi-line style).
  * 1) Docker login
-   ```bash
- docker login
-   ```
+
+    ```bash
+    docker login
+    ```
+
  * 2) Build image (PowerShell style)
-   ```bash
+
+    ```bash
 docker build `
   --no-cache `
   --build-arg VITE_SUPABASE_URL="https://epajjiiuaqjieecvmpln.supabase.co" `
   --build-arg VITE_SUPABASE_PUBLISHABLE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVwYWpqaWl1YXFqaWVlY3ZtcGxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYzMDk2MzIsImV4cCI6MjA4MTg4NTYzMn0.J9X8OXVHC2vTOVFixckZM3so1R3whJe0Gs-WZfQ758M" `
   --build-arg VITE_SUPABASE_PROJECT_ID="epajjiiuaqjieecvmpln" `
   -t mr7pro/wekicode-platform:clawcloud-a3-v1 .
-   ```
+    ```
+
   * 3) Push image to Docker Hub
+
     ```bash
-docker push mr7pro/wekicode-platform:clawcloud-a3-v1
+    docker push mr7pro/wekicode-platform:clawcloud-a3-v1
     ```
 
  -###☁️ Deploy on ClawCloud Run (Assignment #3)
@@ -246,3 +251,4 @@ Typical evidence includes:
 * Docker Hub push
 
 * ClawCloud deployment + production URL working
+
