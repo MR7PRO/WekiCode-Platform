@@ -15,7 +15,8 @@ A Dockerized web platform built with **React + Vite + TypeScript**, served in pr
 - **GitHub Repository:**
   - https://github.com/MR7PRO/WekiCode-Platform.git
 - **YouTube Demo:**
-  - https://www.youtube.com/watch?v=6VVxQGgiiug
+   <video src="[VIDEO_URL](https://www.youtube.com/watch?v=6VVxQGgiiug)" controls playsinline></video>
+
 
 ---
 
