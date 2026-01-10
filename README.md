@@ -15,8 +15,7 @@ A Dockerized web platform built with **React + Vite + TypeScript**, served in pr
 - **GitHub Repository:**
   - https://github.com/MR7PRO/WekiCode-Platform.git
 - **YouTube Demo:**
-   <video src="[VIDEO_URL](https://www.youtube.com/watch?v=6VVxQGgiiug)" controls playsinline></video>
-
+  - https://www.youtube.com/watch?v=6VVxQGgiiug
 
 ---
 
@@ -88,13 +87,13 @@ Create a file named .env in the project root:
 VITE_SUPABASE_PROJECT_ID="epajjiiuaqjieecvmpln"
 VITE_SUPABASE_PUBLISHABLE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVwYWpqaWl1YXFqaWVlY3ZtcGxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYzMDk2MzIsImV4cCI6MjA4MTg4NTYzMn0.J9X8OXVHC2vTOVFixckZM3so1R3whJe0Gs-WZfQ758M"
 VITE_SUPABASE_URL="https://epajjiiuaqjieecvmpln.supabase.co"
+```
 
 Notes:
 
 * "These are client/public values used by the frontend (anon key)."
 
 * "Do NOT commit secret/service-role keys to GitHub."
-```
 
  -### 3) Run using Docker Compose (recommended)
 Option A — Windows (PowerShell)
@@ -151,12 +150,12 @@ docker compose down --rmi local --volumes --remove-orphans
  * 2) Build image (PowerShell style)
 
     ```bash
-    docker build `
-      --no-cache `
-      --build-arg VITE_SUPABASE_URL="https://epajjiiuaqjieecvmpln.supabase.co" `
-      --build-arg VITE_SUPABASE_PUBLISHABLE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVwYWpqaWl1YXFqaWVlY3ZtcGxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYzMDk2MzIsImV4cCI6MjA4MTg4NTYzMn0.J9X8OXVHC2vTOVFixckZM3so1R3whJe0Gs-WZfQ758M" `
-      --build-arg VITE_SUPABASE_PROJECT_ID="epajjiiuaqjieecvmpln" `
-      -t mr7pro/wekicode-platform:clawcloud-a3-v1 .
+docker build `
+  --no-cache `
+  --build-arg VITE_SUPABASE_URL="https://epajjiiuaqjieecvmpln.supabase.co" `
+  --build-arg VITE_SUPABASE_PUBLISHABLE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVwYWpqaWl1YXFqaWVlY3ZtcGxuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYzMDk2MzIsImV4cCI6MjA4MTg4NTYzMn0.J9X8OXVHC2vTOVFixckZM3so1R3whJe0Gs-WZfQ758M" `
+  --build-arg VITE_SUPABASE_PROJECT_ID="epajjiiuaqjieecvmpln" `
+  -t mr7pro/wekicode-platform:clawcloud-a3-v1 .
     ```
 
   * 3) Push image to Docker Hub
